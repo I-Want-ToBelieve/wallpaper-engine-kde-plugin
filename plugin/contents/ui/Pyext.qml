@@ -11,9 +11,10 @@ Item {
         const sh = [
             `EXT=${file}`,
             `WKD="no_pyext_file_found"`,
+            "[ -f `echo /nix/store/*-wallpaper-engine-kde-plugin-*/share/ | awk -F' ' '{print $1}'`$EXT ] && WKD=`echo /nix/store/*-wallpaper-engine-kde-plugin-*/share/ | awk -F' ' '{print $1}'`$EXT",
             "[ -f /usr/share/$EXT ] && WKD=/usr/share/$EXT",
             "[ -f \"$HOME/.local/share/$EXT\" ] && WKD=\"$HOME/.local/share/$EXT\"",
-            "[ -f \"$XDG_DATA_HOME/$EXT\" ] && WKD=\"$XDG_DATA_HOME/$EXT\"", 
+            "[ -f \"$XDG_DATA_HOME/$EXT\" ] && WKD=\"$XDG_DATA_HOME/$EXT\"",
             `exec python3 "$WKD" "${ws_server.url}"`
         ].join("\n");
         return sh;
@@ -29,13 +30,13 @@ Item {
 
     property string _version: {
         if(ok) {
-            ws_server.jrpc.send("version").then(res => { 
-                this._version = res.result 
+            ws_server.jrpc.send("version").then(res => {
+                this._version = res.result
             });
         }
         return '-';
     }
-    
+
     function readfile(path) {
         return ws_server.jrpc.send("readfile", [path]).then((el) => {
             return Qt.atob(el.result);
